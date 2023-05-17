@@ -1,15 +1,23 @@
 import os
 import openai
 from dotenv import load_dotenv
-import asyncio
 
 
 def configure() -> None:
-    """Configures the OpenAI API key from the environment variables."""
+    """Load environment variables from .env file."""
     load_dotenv()
 
 
-def getSummaryFromString(slideText: str) -> str:
+def get_summary_rom_String(slideText: str) -> str:
+    """
+    Apply the GPT-3.5-turbo model to the given text and return a summary of the text.
+    :param:
+        slideText (str): The text to summarize. (assumed the str was taken from a pptx slide)
+    :return:
+        str: The summary of the text.
+    Raises:
+        ValueError: If the OPENAI_API_KEY environment variable is not set.
+    """
     configure()
     openai.api_key = os.getenv("OPENAI_API_KEY")
     if not openai.api_key:
@@ -24,11 +32,10 @@ def getSummaryFromString(slideText: str) -> str:
         messages=messages
     )
     chat_response = completion.choices[0].message.content
-    print(content)
-    print(f'ChatGPT: {chat_response}')
-    print("=====================================")
     messages.append({"role": "system", "content": chat_response})
     return chat_response
+
+
 
 
 
