@@ -1,4 +1,5 @@
 import os
+import collections.abc
 from pptx import Presentation
 import asyncio
 from pptx.exc import PackageNotFoundError
@@ -41,8 +42,6 @@ async def get_list_of_content_from_pptx_file(pptx_file_path: str) -> list:
         str pptx_file_path: path to pptx file
     @return:
         list: list of content from pptx file
-    @raise:
-        ValueError: If the pptx_file_path is not a valid path to a pptx file.
     @raise:
         PackageNotFoundError: If the pptx_file_path is not a valid path to a pptx file.
     """
