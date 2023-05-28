@@ -1,0 +1,29 @@
+{
+    "summary_topic": "Sample Presentation",
+    "slides": [
+        {
+            "slide number": 1,
+            "slide title": "slide 1 title",
+            "slide content": {
+                "section 1": "section1 of slide1",
+                "section 2": "sectionN of slide1"
+            }
+        },
+        {
+            "slide number": 2,
+            "slide title": "slide 2 title",
+            "slide content": {
+                "section 1": "section1 of slide2",
+                "section 2": "sectionN of slide2"
+            }
+        },
+        {
+            "slide number": 3,
+            "slide title": "slide N title",
+            "slide content": {
+                "section 1": "section1 of slideN",
+                "section 2": "sectionN of slideN"
+            }
+        }
+    ]
+}
