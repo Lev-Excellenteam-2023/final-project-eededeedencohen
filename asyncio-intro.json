@@ -1,0 +1,96 @@
+{
+    "summary_topic": "asyncio-intro",
+    "slides": [
+        {
+            "slide number": 1,
+            "slide title": "AsyincIO",
+            "slide content": {
+                "section 1": "AsyncIO is a Python library for writing asynchronous code using coroutines, event loops, and asynchronous input/output operations. It is a powerful tool for high-performance networking applications, web servers, and other CPU-intensive tasks that require concurrency. ",
+                "section 2": "The main idea behind AsyncIO is that instead of blocking when waiting for I/O operations to complete, it allows us to execute other code while waiting for the I/O operation to complete. This eliminates the need for threads or callbacks and simplifies the code significantly. ",
+                "section 3": "In short, AsyncIO is a way to write concurrent code that is both efficient and easy to read. So, lets dive deeper into how it works and how we can use it in our own programs."
+            }
+        },
+        {
+            "slide number": 2,
+            "slide title": "Parallelism",
+            "slide content": {
+                "section 1": "Today we will be discussing the concept of parallelism in computer science. Parallelism refers to the ability to perform multiple operations at the same time. One way to achieve parallelism is through multiprocessing, which involves spreading tasks over a computer's central processing units or CPUs. ",
+                "section 2": "Multiprocessing is particularly useful for CPU-bound tasks, which are tasks that heavily rely on the processing power of the CPU. This includes tightly-bound for loops and mathematical computations. By spreading these tasks over multiple CPUs, multiprocessing can significantly speed up the time it takes to complete these operations. ",
+                "section 3": "It's important to note that not all tasks can be effectively parallelized. Some tasks may have dependencies that restrict their ability to be run in parallel. In those cases, it may be more efficient to process them serially. ",
+                "section 4": "In summary, parallelism allows us to perform multiple operations at the same time, and multiprocessing is one of the ways in which we can achieve parallelism. It is particularly useful for CPU-bound tasks which can be spread over multiple CPUs to speed up their execution."
+            }
+        },
+        {
+            "slide number": 3,
+            "slide title": "Concurrency",
+            "slide content": {
+                "section 1": "Concurrency is a term that is closely related to the concept of parallelism, but it has a slightly broader meaning. It means multiple tasks have the ability to run in an overlapping manner. It's important to note that concurrency does not necessarily imply parallelism.",
+                "section 2": "When we talk about parallelism, we mean multiple tasks being executed simultaneously by different processors or cores of the same processor. They run at the same time, and it can improve the performance of the system. In contrast, concurrency has more to do with task management. It allows for multiple tasks to make progress simultaneously, even if their execution doesn't overlap.",
+                "section 3": "Multiprocessing is when multiple processes run concurrently on a system that has more than one processor. Threads, on the other hand, are smaller units of execution that run within a process. They share the same resources of the process with other threads, which allows for concurrent processing.",
+                "section 4": "In conclusion, concurrency is an important concept in computer science that allows for multiple tasks to make progress simultaneously and efficiently. It's closely related to parallelism, but it has a broader meaning. We covered multiprocessing and threading as examples of concurrency, and how they can improve the performance of a system."
+            }
+        },
+        {
+            "slide number": 4,
+            "slide title": "Threading",
+            "slide content": {
+                "section 1": "Threading is a way to make a program more efficient by allowing multiple threads to work concurrently on different parts of the program. Think of it as having multiple workers in a factory, each working on a different task at the same time.",
+                "section 2": "In programming, threading allows us to execute multiple tasks at the same time within the same program. This means that our program can continue to do other things while waiting for a particular task to complete.",
+                "section 3": "Threading is especially useful for tasks that involve a lot of input/output (IO), when we need to wait for the completion of IO requests. In such cases, threading allows us to avoid blocking the main program, and instead execute other parts of the program while we wait for the IO to finish.",
+                "section 4": "In conclusion, threading is a more efficient way to execute tasks in a program, especially in situations where there is a lot of waiting for IO to complete. It is a powerful tool that can make our programs faster and more responsive."
+            }
+        },
+        {
+            "slide number": 5,
+            "slide title": "Python supports it all",
+            "slide content": {
+                "section 1": "We're going to talk about how Python supports concurrency, which basically means being able to do multiple things at the same time. There are really two main ways that Python handles this: multiprocessing, which is ideal for tasks that use a lot of processing power, like crunching numbers, and threading, which is better for tasks that involve a lot of input and output, like reading and writing to a database. ",
+                "section 2": "Multiprocessing and threading are both examples of concurrency, but multiprocessing is a form of parallelism, which is a type of concurrency that allows multiple tasks to run simultaneously. Python has been supporting both multiprocessing and threading for a long time, thanks to its multiprocessing, threading and concurrent.futures packages. ",
+                "section 3": "So in summary, Python's capabilities in parallelism and concurrency make it an ideal tool for a variety of tasks and it provides well-known documented packages for developers to use."
+            }
+        },
+        {
+            "slide number": 6,
+            "slide title": "AsyincIO",
+            "slide content": {
+                "section 1": "Today, we will be discussing a relatively new module in Python called Asynchronous Input/Output or AsyncIO. This module has also existed or is being built into other languages and runtime environments such as Go, C#, or Scala. ",
+                "section 2": "Now let's understand what AsyncIO means. It is not threading or multiprocessing. Instead, AsyncIO uses something called cooperative multitasking. In simple terms, it means that a single thread of execution cooperates with the event loop by yielding control as soon as it encounters an await expression. ",
+                "section 3": "AsyncIO is useful for IO-bound applications where there is a lot of waiting for input/output operations to complete. By using AsyncIO, you can write asynchronous, non-blocking code that is much more scalable and efficient than traditional synchronous, blocking code.",
+                "section 4": "I hope this brief introduction to AsyncIO has helped you understand its basics. If you're interested in learning more, there are plenty of resources available online to help you get started."
+            }
+        },
+        {
+            "slide number": 7,
+            "slide title": "AsyincIO2",
+            "slide content": {
+                "section 1": "Asynchronous input/output, or I/O, is a method of performing input/output operations independently of other processes in a program. Asynchronous I/O can help programs perform more efficiently and effectively by allowing for multiple I/O operations to be processed simultaneously.",
+                "section 2": "AsyincIO2 is a specific implementation of asynchronous I/O for Python programs. It is a library that provides support for asynchronous I/O with coroutines, allowing program developers to execute multiple I/O operations concurrently.",
+                "section 3": "One of the major advantages of using AsyincIO2 is its ability to improve the speed and efficiency of programs. By allowing multiple I/O operations to be executed concurrently, AsyincIO2 can help programs complete their tasks faster and use system resources more efficiently.",
+                "section 4": "Another advantage of AsyincIO2 is its ability to simplify the programming process for developers. By using coroutines, AsyincIO2 provides an easy-to-use and intuitive interface for handling asynchronous I/O operations.",
+                "section 5": "In summary, AsyincIO2 is a powerful library that can help improve the performance of Python programs by enabling multiple I/O operations to be executed simultaneously. Its use of coroutines also makes it a user-friendly tool for developers looking to implement asynchronous I/O in their programs."
+            }
+        },
+        {
+            "slide number": 8,
+            "slide title": "Differences between threading and asynchronous I/O",
+            "slide content": {
+                "section 1": "In programming, we often come across situations where multiple tasks need to be executed simultaneously. This is where concurrency comes into play.",
+                "section 2": "Threads and asynchronous I/O operations are two common ways of achieving concurrency in programs. The main difference between these two is how they handle data and resources.",
+                "section 3": "Threads share data and resources, while asynchronous I/O operations do not. This means that if multiple tasks being executed through threads require access to the same data or resources, there is a possibility of conflicts. On the other hand, asynchronous I/O operations can be used for independent tasks that do not require data sharing.",
+                "section 4": "In cases where data sharing is necessary, threads can be more efficient than asynchronous I/O operations. However, in cases where tasks do not share data or resources, asynchronous I/O operations can be more efficient than threads.",
+                "section 5": "Threading enables concurrency within a process, while asynchronous I/O enables concurrency inside a single thread only when it uses IO operations. Therefore, we can say that threading is suitable for CPU-bound tasks, while asynchronous I/O is suitable for I/O-bound tasks.",
+                "section 6": "In conclusion, we should use asynchronous I/O when we can and choose threading only when necessary. Remember the famous quote, Use async IO when you can; use threading when you must."
+            }
+        },
+        {
+            "slide number": 9,
+            "slide title": "Concurrency and asyncIO",
+            "slide content": {
+                "section 1": "Now, we are going to talk about Concurrency and asyncIO. Have you ever heard of synchronous I/O and asynchronous I/O? Synchronous I/O is a type of I/O operation where the thread is blocked until the I/O operation is completed. So, only one I/O operation can be performed at a time, which can lead to poor performance when there are multiple I/O operations to be performed.",
+                "section 2": "On the other hand, asynchronous I/O allows us to perform multiple I/O operations simultaneously on the same thread. This is because asyncio allows I/O operations to be performed without blocking the thread. So, when an I/O operation is performed asynchronously, the thread is not blocked and can continue to run other tasks. The I/O operation will complete in the background and will notify the thread once it is finished.",
+                "section 3": "This type of I/O can greatly improve the overall performance of our applications by allowing us to execute multiple I/O bound tasks without blocking other tasks. AsyncIO is a powerful and flexible library in Python that helps us to write asynchronous code in a clear and concise way. By using async and await keywords, we can write asynchronous code that looks like synchronous code, making it easier to understand and maintain.",
+                "section 4": "In conclusion, asynchronous I/O is a valuable technique that can significantly increase the performance of our applications when working with multiple I/O operations. We can achieve this using the asyncio library in Python which provides a simpler way to write asynchronous code without worrying about underlying details."
+            }
+        }
+    ]
+}

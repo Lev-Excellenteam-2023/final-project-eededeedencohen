@@ -60,15 +60,15 @@ async def get_list_of_content_from_pptx_file(pptx_file_path: str) -> list:
     return content_list
 
 
-async def main():
-    pptx_file_path = "./files/asyncio-intro.pptx"
-    content_list = await get_list_of_content_from_pptx_file(pptx_file_path)
-    for content in content_list:
-        print(content)
-    print("=====================================")
-    print(content_list)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+# async def main():
+#     pptx_file_path = "./files/asyncio-intro.pptx"
+#     content_list = await get_list_of_content_from_pptx_file(pptx_file_path)
+#     for content in content_list:
+#         print(content)
+#     print("=====================================")
+#     print(content_list)
+#
+#
+# if __name__ == "__main__":
+#     asyncio.run(main())
 

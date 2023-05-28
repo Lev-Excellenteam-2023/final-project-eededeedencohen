@@ -37,13 +37,13 @@ async def write_data_to_json(content_data: list, destination_path: str, summary_
     async with aiofiles.open(destination_path, 'w') as f:
         await f.write(json.dumps(formatted_data, indent=4))
 
-if __name__ == "__main__":
-    data = [
-        [["slide 1 title"], ["section1 of slide1"], ["sectionN of slide1"]],
-        [["slide 2 title"], ["section1 of slide2"], ["sectionN of slide2"]],
-        # ...,
-        [["slide N title"], ["section1 of slideN"], ["sectionN of slideN"]]
-    ]
-
-    asyncio.run(write_data_to_json(data, 'data.json', "Sample Presentation"))
+# if __name__ == "__main__":
+#     data = [
+#         [["slide 1 title"], ["section1 of slide1"], ["sectionN of slide1"]],
+#         [["slide 2 title"], ["section1 of slide2"], ["sectionN of slide2"]],
+#         # ...,
+#         [["slide N title"], ["section1 of slideN"], ["sectionN of slideN"]]
+#     ]
+#
+#     asyncio.run(write_data_to_json(data, 'data.json', "Sample Presentation"))
 
