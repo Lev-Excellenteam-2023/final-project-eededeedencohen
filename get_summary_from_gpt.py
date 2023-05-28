@@ -99,33 +99,6 @@ async def get_titles_of_slides(slides_content: list) -> list:
     return [slide_content[0][0] for slide_content in slides_content]
 
 
-async def convert_pptx_to_summary(pptx_path: str) -> list:
-    """
-    @summary:
-        Convert the pptx file to a summary of the slides.
-    @param pptx_path:
-        str: The path to the pptx file.
-    @return:
-        list: The list of the summary of the slides is this format: [[slide_title1, slide_summary1], [slide_title2, slide_summary2], ...]
-    @raise:
-        ValueError: If the OPENAI_API_KEY environment variable is not set.
-    """
-    slides_content_list = await get_list_of_content_from_pptx_file(pptx_path)
-    slides_titles = await get_titles_of_slides(slides_content_list)
-    summary_pptx_list = []
-
-    for slide_text in slides_content_list:
-        slide_summary = asyncio.create_task(get_explanation_of_text(str(slide_text)))
-        summary_pptx_list.append(slide_summary)
-
-    await asyncio.gather(*summary_pptx_list)
-
-    result = []
-    for i, slide_summary in enumerate(summary_pptx_list):  # Here also change "slide_summary" to "task"
-        result.append([slides_titles[i], slide_summary.result()])
-    return result
-
-
 async def main():
     pptxSlideContent = [['Parallelism'], ['Parallelism consists of performing multiple operations at the same time. Multiprocessing is a means to effect parallelism, and it entails spreading tasks over a computer’s central processing units (CPUs, or cores). '], ['Multiprocessing is well-suited for CPU-bound tasks: tightly bound for loops and mathematical computations usually fall into this category.']]
     # results = await convert_pptx_to_summary("./files/asyncio-intro.pptx")
