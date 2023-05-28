@@ -1,0 +1,5 @@
+.env
+.idea/
+files/
+SpeechToText/
+__pycache__/
