@@ -1,8 +1,7 @@
 import asyncio
-import os
 from get_summary_from_gpt import get_explanation_of_text, get_titles_of_slides
-from parse_pptx_file import get_list_of_content_from_pptx_file
-from wtite_list_to_json import write_data_to_json
+from Parser.parse_pptx_file import get_list_of_content_from_pptx_file
+from Parser.wtite_list_to_json import write_data_to_json
 
 
 def convert_list_to_sections_list(summary_list: list) -> list:
@@ -47,7 +46,7 @@ async def convert_pptx_to_summary(pptx_path: str) -> list:
     return result
 
 
-async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_destination_path: str , summary_topic_name: str) -> None:
+async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_destination_path: str, summary_topic_name: str) -> None:
     """
     @summary:
         Convert the pptx file to a summary of the slides and write the summary to a JSON file.
@@ -69,7 +68,7 @@ async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_
 
 
 # Run the async function
-asyncio.run(convert_pptx_to_summary_and_write_to_json("./files/asyncio-intro.pptx", "./asyncio-intro.json", "asyncio-intro"))
+asyncio.run(convert_pptx_to_summary_and_write_to_json("../files/asyncio-intro.pptx", "./asyncio-intro.json", "asyncio-intro"))
 
 
 
