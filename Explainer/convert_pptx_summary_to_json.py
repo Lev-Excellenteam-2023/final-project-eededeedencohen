@@ -1,7 +1,7 @@
 import asyncio
 from get_summary_from_gpt import get_explanation_of_text, get_titles_of_slides
-from Parser.parse_pptx_file import get_list_of_content_from_pptx_file
-from Parser.wtite_list_to_json import write_data_to_json
+from Explainer.Parser.parse_pptx_file import get_list_of_content_from_pptx_file
+from Explainer.Parser.wtite_list_to_json import write_data_to_json
 
 
 def convert_list_to_sections_list(summary_list: list) -> list:
@@ -60,15 +60,15 @@ async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_
         None
     """
     pptx_content = await convert_pptx_to_summary(pptx_source_path)
-    print(convert_list_to_sections_list(pptx_content[0]))
+    # print(convert_list_to_sections_list(pptx_content[0]))
 
     converting_List_to_Section_List = [convert_list_to_sections_list(pptx_content[i]) for i in range(len(pptx_content))]
-    print(converting_List_to_Section_List)
+    # print(converting_List_to_Section_List)
     await write_data_to_json(converting_List_to_Section_List, json_destination_path, summary_topic_name)
 
 
 # Run the async function
-asyncio.run(convert_pptx_to_summary_and_write_to_json("../files/asyncio-intro.pptx", "./asyncio-intro.json", "asyncio-intro"))
+# asyncio.run(convert_pptx_to_summary_and_write_to_json("../files/asyncio-intro.pptx", "./asyncio-intro.json", "asyncio-intro"))
 
 
 
