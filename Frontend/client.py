@@ -1,4 +1,5 @@
 import requests
+from Frontend.status import Status
 import os
 
 
@@ -46,5 +47,20 @@ def upload(file_path: str) -> None:
     # catch connection error:
     except requests.exceptions.ConnectionError:
         raise Exception('Server is down.')
+
+
+def status(uid: str) -> Status:
+    """
+    @summary:
+        Sends the appropriate HTTP request to the web app, with the UID attached to the URL.
+        and returns Status object with the data from the response.
+    @param uid:
+        The UID of the file to get the status of.
+    @return:
+        Status object with the data from the response.
+    @raise:
+        Exception: if the server is down.
+        Exception: if the server returned an error.
+    """
 
 
