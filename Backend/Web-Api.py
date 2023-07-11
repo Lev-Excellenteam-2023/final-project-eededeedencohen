@@ -62,12 +62,12 @@ class FileUploadResource(Resource):
         """
         if 'file' not in request.files:
             # case the body of the request is empty: no file part
-            return {"message": "No file part in the request."}, 400
+            return {"error": "No file part in the request."}, 400
 
         file = request.files['file']
         if file.filename == '':
             # case the user does not select a file to upload
-            return {"message": "No file selected for uploading"}, 400
+            return {"error": "No file selected for uploading"}, 400
 
         if file and allowed_file(file.filename):
             # case the file is valid (pptx file):
