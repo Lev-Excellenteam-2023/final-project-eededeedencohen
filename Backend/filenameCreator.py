@@ -63,7 +63,7 @@ def get_uploaded_datetime(output_filename: str) -> str:
     @return:
         str: the datetime from the output filename.
         example:
-            original_filename__01-01-2021--12-00__xxx-yyy-zzz.pptx ->
+            original_filename__01-01-2021--12-00__xxx-yyy-zzz.json ->
             01-01-2021 12-00
     """
     timedate = output_filename.split('__')[-2]  # MM-DD-YYYY--HH-MM
@@ -84,9 +84,6 @@ def get_original_filename(output_filename: str) -> str:
     """
     file_name_parts = output_filename.split('__')[:-2]
     return ''.join(file_name_parts)
-
-
-
 
 
 
