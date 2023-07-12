@@ -104,6 +104,8 @@ def find_file(uid: str) -> (dict, int):
             dict: The JSON content of the file (summary of the presentation) and status code 200.
         case status code 202:
             dict: The message "File is still being processed" and status code 202.
+        case status code 404:
+            dict: The message "File not found" and status code 404.
     @raise FileNotFoundError:
         If the file was not found, causing a retry.
     """
