@@ -25,7 +25,7 @@ class Status:
             Returns True if the status is "done", False otherwise.
     """
 
-    def __init__(self, status: str, filename: str, timestamp: str, explanation: object) -> None:
+    def __init__(self, status: str = "", filename: str = "", timestamp: str = "", explanation: object = None) -> None:
         """
         @summary:
             Constructs a Status object.
@@ -42,7 +42,10 @@ class Status:
         self.filename = filename
         self.timestamp = None
         self.explanation = explanation
-        self.set_datetime(timestamp)
+        if timestamp:
+            self.set_datetime(timestamp)
+        else:
+            self.timestamp = None
 
     def is_done(self) -> bool:
         """
