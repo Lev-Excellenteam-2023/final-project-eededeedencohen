@@ -69,7 +69,7 @@ def get_uploaded_datetime(output_filename: str) -> str:
     timedate = output_filename.split('__')[-2]  # MM-DD-YYYY--HH-MM
     date = timedate.split('--')[0]  # MM-DD-YYYY
     time = timedate.split('--')[1].replace('-', ':')  # HH:MM
-    return f'{date} {time}'
+    return f'{date} {time}'  # MM-DD-YYYY HH:MM
 
 
 def get_original_filename(output_filename: str) -> str:
@@ -84,7 +84,3 @@ def get_original_filename(output_filename: str) -> str:
     """
     file_name_parts = output_filename.split('__')[:-2]
     return ''.join(file_name_parts)
-
-
-
-
