@@ -1,0 +1,1 @@
+to apply the Backend, write to the terminal the following command: python -m Backend.web_api
