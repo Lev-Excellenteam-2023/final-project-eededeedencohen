@@ -4,10 +4,10 @@ import os
 
 
 # Directory of the uploads folder
-upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'uploads')
+upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Tests/', 'files')
 
 
-def upload(file_path: str) -> None:
+def upload(file_path: str) -> str:
     """
     @summary:
         Sends the appropriate HTTP request to the web app, with the file attached.
@@ -101,3 +101,7 @@ def status(uid: str) -> Status:
 
     except requests.exceptions.ConnectionError:
         raise Exception('Server is down.')
+
+
+# test upload:
+# print(upload(os.path.join(upload_folder, 'asyncio-intro.pptx')))
