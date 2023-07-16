@@ -1,14 +1,20 @@
 import asyncio
 import os
+import threading
+import time
+
 from Explainer.convert_pptx_summary_to_json import convert_pptx_to_summary_and_write_to_json
 from Explainer.get_data_from_filename import get_unique_id, get_original_filename, get_uploaded_datetime
+
+uploads_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'uploads')
+outputs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'outputs')
 
 
 async def process_pptx_file_to_json(filename: str) -> None:
     """
     @summary:
         This function checks if the file exists in the 'uploads' folder
-        and if file is a pptx file, converts it to a json summary,
+        and if the file is a pptx file, converts it to a json summary,
         writes the json to a destination path,
         and then deletes the original file.
     @param filename:
@@ -18,18 +24,18 @@ async def process_pptx_file_to_json(filename: str) -> None:
     @return:
         None
     """
-    uploaded_file_path = os.path.join("../Shared/uploads", filename)
+    uploaded_file_path = os.path.join(uploads_folder, filename)
 
     # Process only if the file is pptx file
     if os.path.isfile(uploaded_file_path) and filename.endswith(".pptx"):
 
-        # extract data from the filename
+        # Extract data from the filename
         original_filename = get_original_filename(filename)
         unique_id = get_unique_id(filename)
         uploaded_datetime = get_uploaded_datetime(filename)
 
         output_filename = filename.replace(".pptx", "") + ".json"
-        output_file_path = "../Shared/outputs/" + output_filename
+        output_file_path = os.path.join(outputs_folder, output_filename)
         title_name = original_filename
 
         await convert_pptx_to_summary_and_write_to_json(uploaded_file_path, output_file_path, title_name)
@@ -48,7 +54,7 @@ async def process_new_uploaded_files_to_json() -> None:
         None
     """
     while True:
-        new_uploaded_filenames = os.listdir("../Shared/uploads")
+        new_uploaded_filenames = os.listdir(uploads_folder)
 
         # Gather tasks and run them in parallel
         print("Processing new uploaded files...")
@@ -62,4 +68,10 @@ async def process_new_uploaded_files_to_json() -> None:
         print("===============================================================================")
         await asyncio.sleep(10)
 
-asyncio.run(process_new_uploaded_files_to_json())
+
+def start():
+    asyncio.run(process_new_uploaded_files_to_json())
+
+
+if __name__ == '__main__':
+    start()

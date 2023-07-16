@@ -44,5 +44,5 @@ def get_original_filename(uploaded_filename: str) -> str:
         str: The original filename from the uploaded filename.
     """
     file_name_parts = uploaded_filename.split('__')[:-2]
-    original_filename = ''.join(file_name_parts)
+    original_filename = '__'.join(file_name_parts)
     return original_filename

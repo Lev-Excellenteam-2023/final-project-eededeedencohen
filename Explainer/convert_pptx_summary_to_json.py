@@ -1,5 +1,5 @@
 import asyncio
-from get_summary_from_gpt import get_explanation_of_text, get_titles_of_slides
+from Explainer.get_summary_from_gpt import get_explanation_of_text, get_titles_of_slides
 from Explainer.Parser.parse_pptx_file import get_list_of_content_from_pptx_file
 from Explainer.Parser.wtite_list_to_json import write_data_to_json
 
