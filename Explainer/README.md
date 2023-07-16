@@ -1,0 +1,1 @@
+To apply the Explainer, write to the terminal: python -m Explainer.process_new_pptx_files
