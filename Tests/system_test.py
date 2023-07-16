@@ -67,4 +67,4 @@ def test_system(server_process, explainer_process):
 
     # Check the result
     assert status_response.status == "done"
-    
+
