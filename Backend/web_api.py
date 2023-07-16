@@ -4,7 +4,7 @@ from flask import Flask, request, json
 from flask_restx import Api, Resource, fields
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from filenameCreator import create_new_filename, get_unique_id, \
+from Backend.filenameCreator import create_new_filename, get_unique_id, \
     get_uploaded_datetime, get_original_filename
 
 # Initialize Flask and Flask-RESTx
@@ -145,11 +145,36 @@ def find_file(uid: str) -> (dict, int):
 @api.route('/content/json/<string:uid>', methods=['GET'])
 class JsonContentResource(Resource):
     def get(self, uid: str) -> (dict, int):
+        """
+        @summary:
+            Sends get request to the server with the unique ID of the file.
+            The responses are:
+                200 - "done": the file was processed successfully.
+                202 - "pending": the file is still being processed.
+                404 - "not found": the file was not found.
+        @param uid:
+        """
         try:
             return find_file(uid)
         except FileNotFoundError:
             return {"message": "File not found"}, 404
 
 
+def run_server(with_debug: bool) -> None:
+    """
+    @summary:
+        Runs the server on localhost:5000.
+    @param with_debug:
+        bool: True if the server should run with debug, False otherwise.
+        the debug mode is similar to nodemon - it restarts the server when something changes in the project (code or files).
+    @return:
+        None
+    """
+    app.run(debug=with_debug)
+    print("Server is running...")
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    run_server(True)  # with debug - similar to nodemon
+
+

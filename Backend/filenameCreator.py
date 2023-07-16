@@ -84,7 +84,3 @@ def get_original_filename(output_filename: str) -> str:
     """
     file_name_parts = output_filename.split('__')[:-2]
     return ''.join(file_name_parts)
-
-
-
-
