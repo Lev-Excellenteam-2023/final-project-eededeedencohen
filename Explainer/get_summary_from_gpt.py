@@ -3,7 +3,7 @@ import openai
 from retrying import retry
 from dotenv import load_dotenv
 # from parse_pptx_file import get_list_of_content_from_pptx_file
-import asyncio
+import asyncio 
 
 
 def configure() -> None:
