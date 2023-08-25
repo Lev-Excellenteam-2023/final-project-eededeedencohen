@@ -5,7 +5,7 @@ from DB.schema import get_pptx_bytes
 
 @pytest.mark.asyncio
 async def test_compare_parse_functions_output():
-    file_path = "../../../files/asyncio-intro.pptx"
+    file_path = "../../files/asyncio-intro.pptx"
     pptx_bytes = get_pptx_bytes(1)
 
     content_from_file = await get_list_of_content_from_pptx_file(file_path)
