@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import JSON  # Import the JSON type
 import uuid
 from datetime import datetime
+import os
 
 
 Base = declarative_base()
@@ -46,7 +47,8 @@ class Files(Base):
     upload = relationship("Upload", back_populates="file")
 
 
-DATABASE_URL = "sqlite:///./db/excellenteam.db"
+this_path = os.path.dirname(os.path.abspath(__file__))
+DATABASE_URL = "sqlite:///" + str(this_path) + "./excellenteam.db"
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True for better logging
 #
 # Create tables in the database
@@ -194,6 +196,21 @@ def convert_bytes_to_pptx_file(bytes_pptx_file: bytes, output_filename: str) -> 
         f.write(bytes_pptx_file)
 
 
+def get_pptx_bytes(file_id: int) -> bytes:
+    """
+    @summary:
+        Get the binary data of the pptx file from the database.
+    @param file_id: int
+        The ID of the file.
+    @return: bytes
+        The binary data of the file.
+    """
+    session = SessionLocal()
+    file = session.query(Files).filter(Files.id == file_id).first()
+    session.close()
+    return file.pptx_file
+
+
 def insert_upload_explanation(id_upload: int, explanation: dict) -> None:
     """
     @summary:
@@ -210,11 +227,4 @@ def insert_upload_explanation(id_upload: int, explanation: dict) -> None:
     session.close()
 
 
-
-
-
-
-
-
-
-
+# print(get_pptx_bytes(1))

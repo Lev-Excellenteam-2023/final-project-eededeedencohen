@@ -46,6 +46,33 @@ async def convert_pptx_to_summary(pptx_path: str) -> list:
     return result
 
 
+# async def convert_pptx_bytes_to_summary(pptx_bytes: bytes) -> list:
+#     """
+#     @summary:
+#         Convert the pptx file to a summary of the slides.
+#     @param pptx_bytes:
+#         bytes: The binary data of the pptx file.
+#     @return:
+#         list: The list of the summary of the slides is this format: [[slide_title1, slide_summary1], [slide_title2, slide_summary2], ...]
+#     @raise:
+#         ValueError: If the OPENAI_API_KEY environment variable is not set.
+#     """
+#     slides_content_list = await get_list_of_content_from_pptx_file(pptx_bytes)
+#     slides_titles = await get_titles_of_slides(slides_content_list)
+#     summary_pptx_list = []
+#
+#     for slide_text in slides_content_list:
+#         slide_summary = asyncio.create_task(get_explanation_of_text(str(slide_text)))
+#         summary_pptx_list.append(slide_summary)
+#
+#     await asyncio.gather(*summary_pptx_list)
+#
+#     result = []
+#     for i, slide_summary in enumerate(summary_pptx_list):  # Here also change "slide_summary" to "task"
+#         result.append([slides_titles[i], slide_summary.result()])
+#     return result
+
+
 async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_destination_path: str, summary_topic_name: str) -> None:
     """
     @summary:

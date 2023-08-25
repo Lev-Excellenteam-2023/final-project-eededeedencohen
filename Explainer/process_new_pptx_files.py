@@ -1,7 +1,5 @@
 import asyncio
 import os
-import threading
-import time
 
 from Explainer.convert_pptx_summary_to_json import convert_pptx_to_summary_and_write_to_json
 from Explainer.get_data_from_filename import get_unique_id, get_original_filename, get_uploaded_datetime
