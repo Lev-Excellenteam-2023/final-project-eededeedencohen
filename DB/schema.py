@@ -123,6 +123,28 @@ def get_user_by_email(user_email:str) -> dict:
     return {"id": user_id, "email": email}
 
 
+def get_current_datetime() -> datetime:
+    """
+    @summary:
+        Get the current datetime.
+    @return: datetime
+    """
+    return datetime.utcnow()
+
+
+def update_finish_time(upload_id: int) -> None:
+    """
+    @summary:
+        Update the finish_time of the upload with the given ID.
+    @param upload_id: int
+        The ID of the upload.
+    """
+    session = SessionLocal()
+    session.query(Upload).filter(Upload.id == upload_id).update({Upload.finish_time: get_current_datetime()})
+    session.commit()
+    session.close()
+
+
 def add_new_pptx_file(filename: str, email: str = None) -> None:
     """
     @summary:
@@ -139,7 +161,7 @@ def add_new_pptx_file(filename: str, email: str = None) -> None:
         user_id = None
 
     session = SessionLocal()
-    upload_time = datetime.utcnow()
+    upload_time = get_current_datetime()
     status = "pending"
 
     # Read the PPTX file as binary data
@@ -227,4 +249,58 @@ def insert_upload_explanation(id_upload: int, explanation: dict) -> None:
     session.close()
 
 
-# print(get_pptx_bytes(1))
+def get_all_id_pending_files() -> list:
+    """
+    @summary:
+        Get all the IDs of the pending files in the database
+    @return: list
+        The list of the IDs of the pending files.
+    """
+    session = SessionLocal()
+    pending_files = session.query(Upload).filter(Upload.status == "pending").all()
+    session.close()
+    return [file.id for file in pending_files]
+
+
+def get_file_name(file_id: int) -> str:
+    """
+    @summary:
+        Get the name of the file from the database.
+    @param file_id: int
+        The ID of the file.
+    @return: str
+        The name of the file.
+    """
+    session = SessionLocal()
+    file = session.query(Upload).filter(Upload.id == file_id).first()
+    session.close()
+    return file.filename
+
+def change_status(upload_id: int, new_status: str) -> None:
+    """
+    @summary:
+        Change the status of the upload.
+    @param upload_id: int
+        The ID of the upload.
+    @param new_status: str
+        The new status of the upload.
+    """
+    session = SessionLocal()
+    upload = session.query(Upload).filter(Upload.id == upload_id).first()
+    upload.status = new_status
+    session.commit()
+    session.close()
+
+
+def delete_pptx_file(file_id):
+    """
+    @summary:
+        Delete the pptx file from the database - from the files table.
+    @param file_id: int
+        The ID of the file.
+    """
+    session = SessionLocal()
+    session.query(Files).filter(Files.id == file_id).delete()
+    session.commit()
+    session.close()
+
