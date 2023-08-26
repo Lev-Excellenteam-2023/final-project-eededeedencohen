@@ -4,16 +4,13 @@ from flask import Flask, request, json
 from flask_restx import Api, Resource, fields
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from Backend.filenameCreator import create_new_filename, get_unique_id, \
-    get_uploaded_datetime, get_original_filename
+from DB.schema import get_status_by_uid, get_data_by_uid, add_new_pptx_file
+
 
 # Initialize Flask and Flask-RESTx
 app = Flask(__name__)
 api = Api(app)
 
-# Directory paths
-upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'uploads')
-outputs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'outputs')
 
 # File extensions
 allowed_extensions = {'pptx'}
@@ -49,7 +46,7 @@ class FileUploadResource(Resource):
     def post(self) -> (dict, int):
         """
         @summary:
-            Uploads a file to the server in the 'uploads' folder.
+            Uploads a file to the database.
         @param:
             file: FileStorage
                 The file to upload.
@@ -71,12 +68,11 @@ class FileUploadResource(Resource):
             return {"error": "No file selected for uploading"}, 400
 
         if file and allowed_file(file.filename):
-            # case the file is valid (pptx file):
             filename = secure_filename(file.filename)
-            new_filename = create_new_filename(filename)
-            file.save(os.path.join(upload_folder, new_filename))
-            uid_filename = get_unique_id(new_filename)
-            return {"uid": uid_filename}, 200
+            filename = os.path.splitext(filename)[0]
+            file_content = file.read()
+            uid_dictionary = add_new_pptx_file(file_content, filename)
+            return uid_dictionary, 200
 
         else:
             # case the file is invalid (not a pptx file):
@@ -109,37 +105,28 @@ def find_file(uid: str) -> (dict, int):
     @raise FileNotFoundError:
         If the file was not found, causing a retry.
     """
-    # case1: the file found in the output's folder:
-    return_json_filename = [filename for filename in os.listdir(outputs_folder) if filename.endswith('.json') and get_unique_id(filename) == uid]
-    if len(return_json_filename) > 0:
-        with open(os.path.join(outputs_folder, return_json_filename[0])) as f:
-            status = "done"
-            explanation = json.load(f)
-            uploaded_date_time = get_uploaded_datetime(return_json_filename[0])
-            original_filename = get_original_filename(return_json_filename[0])
+    upload_data = get_data_by_uid(uid)
+    # case1: there is no file with the given unique ID:
+    if upload_data is None:
+        return {"status": "not found"}, 404
+
+    # case2: the file just uploaded and not processed yet:
+    elif upload_data["status"] == "pending":
+        return {"status": "pending"}, 202
+
+    # case3: the file right now is being processed:
+    elif upload_data["status"] == "processing":
+        return {"status": "processing"}, 202
+
+    # case4: the file was processed successfully:
+    else:
         return {
-            "status": status,
-            "filename": original_filename,
-            "timestamp": uploaded_date_time,
-            "explanation": explanation
+            "status": upload_data["status"],
+            "filename": upload_data["filename"],
+            "upload time": upload_data["upload_time"].strftime('%d %B %Y %H:%M:%S'),
+            "processing end time": upload_data["finish_time"].strftime('%d %B %Y %H:%M:%S'),
+            "explanation": upload_data["explanation"]
         }, 200
-
-    # case2: the file not found in the 'outputs' folder but found in the 'uploads' folder:
-    upload_filename = [filename for filename in os.listdir(upload_folder) if filename.endswith('.pptx') and get_unique_id(filename) == uid]
-    if len(upload_filename) > 0:
-        status = "pending"
-        uploaded_date_time = get_uploaded_datetime(upload_filename[0])
-        original_filename = get_original_filename(upload_filename[0])
-
-        return {
-            "status": status,
-            "filename": original_filename,
-            "timestamp": uploaded_date_time,
-            "explanation": None
-        }, 202
-
-    # case3: the file not found in the 'outputs' folder and not found in the 'uploads' folder:
-    return {"status": "not found"}, 404
 
 
 @api.route('/content/json/<string:uid>', methods=['GET'])

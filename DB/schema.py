@@ -145,15 +145,19 @@ def update_finish_time(upload_id: int) -> None:
     session.close()
 
 
-def add_new_pptx_file(filename: str, email: str = None) -> None:
+def add_new_pptx_file(file_in_bytes: bytes, filename: str, email: str = None) -> dict:
     """
     @summary:
         Add a new pptx file to the database.
         if the email is not None, use the add_user function to add the user to the database.
+    @param file_in_bytes: bytes
+        The pptx file as bytes.
     @param filename: str
         The name of the file.
     @param email: str
         The email of the user.
+    @return:
+        key-value: uid of the upload - string
     """
     if email:
         user_id = add_user(email)
@@ -164,9 +168,9 @@ def add_new_pptx_file(filename: str, email: str = None) -> None:
     upload_time = get_current_datetime()
     status = "pending"
 
-    # Read the PPTX file as binary data
-    with open(filename, 'rb') as f:
-        file_blob = f.read()
+    # # Read the PPTX file as binary data
+    # with open(filename, 'rb') as f:
+    #     file_blob = f.read()
 
     # Insert the new Upload record
     new_upload = Upload(filename=filename, upload_time=upload_time, status=status, user_id=user_id)
@@ -176,13 +180,15 @@ def add_new_pptx_file(filename: str, email: str = None) -> None:
 
     # Get the ID of the newly created Upload record
     upload_id = new_upload.id
+    upload_uid = new_upload.uid
 
     # Insert the binary data to the Files table
-    new_file = Files(id=upload_id, pptx_file=file_blob)
+    new_file = Files(id=upload_id, pptx_file=file_in_bytes)
     session.add(new_file)
 
     try:
         session.commit()
+        return {"uid": upload_uid}
     except Exception as e:
         session.rollback()
         raise e
@@ -276,6 +282,7 @@ def get_file_name(file_id: int) -> str:
     session.close()
     return file.filename
 
+
 def change_status(upload_id: int, new_status: str) -> None:
     """
     @summary:
@@ -303,4 +310,39 @@ def delete_pptx_file(file_id):
     session.query(Files).filter(Files.id == file_id).delete()
     session.commit()
     session.close()
+
+
+def get_status_by_uid(uid: str) -> str:
+    """
+    @summary:
+        Get the status of the upload by the uid.
+    @param uid: str
+        The uid of the upload.
+    @return: str
+        The status of the upload.
+    """
+    session = SessionLocal()
+    upload = session.query(Upload).filter(Upload.uid == uid).first()
+    session.close()
+    return upload.status
+
+
+def get_data_by_uid(uid: str) -> dict:
+    """
+    @summary:
+        Get the data of the upload by the uid.
+    @param uid: str
+        The uid of the upload.
+    @return: dict
+        The data of the upload.
+    """
+    session = SessionLocal()
+    upload = session.query(Upload).filter(Upload.uid == uid).first()
+    session.close()
+    if upload is None:
+        return None
+    return {"id": upload.id, "filename": upload.filename, "status": upload.status, "upload_time": upload.upload_time, "finish_time": upload.finish_time, "explanation": upload.explanation}
+
+
+# print(get_data_by_uid("31de5733-933b-45fa-8b28-827a1a3b231e"))
 
