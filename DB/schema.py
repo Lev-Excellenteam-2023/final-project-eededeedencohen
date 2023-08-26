@@ -355,13 +355,33 @@ def get_uid_by_email_and_filename(email: str, filename: str) -> dict:
         case 3: filename doesn't exist - {"uid": None, "email": email, "filename": None}
     """
     session = SessionLocal()
-    user_id = session.query(User).filter(User.email == email).first().id
-    if user_id is None:
+    user = session.query(User).filter(User.email == email).first()
+
+    if user is None:
         session.close()
         return {"uid": None, "email": None, "filename": None}
-    upload = session.query(Upload).filter(Upload.user_id == user_id, Upload.filename == filename).order_by(Upload.upload_time.desc()).first()
+
+    status_done_upload = (
+        session.query(Upload)
+        .filter(Upload.user_id == user.id, Upload.filename == filename, Upload.status == "done")
+        .order_by(Upload.upload_time.desc())
+        .first()
+    )
+
+    if status_done_upload is None:
+        upload = (
+            session.query(Upload)
+            .filter(Upload.user_id == user.id, Upload.filename == filename)
+            .order_by(Upload.upload_time.desc())
+            .first()
+        )
+    else:
+        upload = status_done_upload
+
     session.close()
+
     if upload:
         return {"uid": upload.uid, "email": email, "filename": filename}
     else:
         return {"uid": None, "email": email, "filename": None}
+

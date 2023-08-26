@@ -4,7 +4,7 @@ from flask import Flask, request, json
 from flask_restx import Api, Resource, fields
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from DB.schema import get_status_by_uid, get_data_by_uid, add_new_pptx_file, get_uid_by_email_and_filename
+from DB.schema import get_data_by_uid, add_new_pptx_file, get_uid_by_email_and_filename
 
 
 # Initialize Flask and Flask-RESTx
@@ -188,6 +188,7 @@ class JsonContentResource(Resource):
         """
         @summary:
             Sends get request to the server with the unique ID of the file.
+            If the uid is not given, the function will search the file by email and filename in the body of the request.
             The responses are:
                 200 - "done": the file was processed successfully.
                 202 - "pending": the file is still being processed.
@@ -200,14 +201,14 @@ class JsonContentResource(Resource):
             except FileNotFoundError:
                 return {"message": "Upload not found"}, 404
         else:
-            # case the body have no email or filename:
-            email = request.form['email']
-            filename = request.form['filename']
-            if email is None and filename is None:
-                return {"error": "missing parameters: email or filename or both"}, 400
-            elif email is None:
+            email = request.form.get('email')
+            filename = request.form.get('filename')
+
+            if not email and not filename:
+                return {"error": "missing parameters: email and filename"}, 400
+            elif not email:
                 return {"error": "missing parameter: email"}, 400
-            elif filename is None:
+            elif not filename:
                 return {"error": "missing parameter: filename"}, 400
             else:
                 try:
