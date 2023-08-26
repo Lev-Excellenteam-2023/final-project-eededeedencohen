@@ -69,9 +69,13 @@ class FileUploadResource(Resource):
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            filename = os.path.splitext(filename)[0]
-            file_content = file.read()
-            uid_dictionary = add_new_pptx_file(file_content, filename)
+            filename = os.path.splitext(filename)[0]  # remove the .pptx extension
+            file_content = file.read()  # read the file as bytes
+            if 'email' in request.form:
+                email = request.form['email']
+                uid_dictionary = add_new_pptx_file(file_content, filename, email)
+            else:
+                uid_dictionary = add_new_pptx_file(file_content, filename)
             return uid_dictionary, 200
 
         else:
