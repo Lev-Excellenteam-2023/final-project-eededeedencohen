@@ -4,7 +4,7 @@ from flask import Flask, request, json
 from flask_restx import Api, Resource, fields
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from DB.schema import get_status_by_uid, get_data_by_uid, add_new_pptx_file
+from DB.schema import get_status_by_uid, get_data_by_uid, add_new_pptx_file, get_uid_by_email_and_filename
 
 
 # Initialize Flask and Flask-RESTx
@@ -85,7 +85,7 @@ class FileUploadResource(Resource):
 
 # Retry up to 2 times, waiting 2 seconds between retries
 @retry(stop=stop_after_attempt(2), wait=wait_fixed(2))
-def find_file(uid: str) -> (dict, int):
+def find_file_by_uid(uid: str) -> (dict, int):
     """
     @summary:
         Finds the file with the given unique ID.
@@ -133,7 +133,56 @@ def find_file(uid: str) -> (dict, int):
         }, 200
 
 
+# Retry up to 2 times, waiting 2 seconds between retries
+@retry(stop=stop_after_attempt(2), wait=wait_fixed(2))
+def find_file_by_email_and_filename(email: str, filename: str) -> (dict, int):
+    """
+    @summary:
+        Finds the file with the given email and filename.
+        if the email not found:
+            -> return json format that contains the message "email not found". status code 404.
+
+        if the email found but the filename not found:
+            -> return json format that contains the message "filename not found". status code 404.
+
+        if the email and the filename fount in the same row in the database:
+            -> get the uid of the file and apply the find_file_by_uid function uid of the upload data.
+               case there is more than one row with the same email and filename: the uid is of the last upload.
+    @param email:
+        str: The unique ID of the file to find.
+    @param filename:
+        str: the filename of the file to find.
+    @return:
+        case status code 200:
+            dict: The JSON content of the file (summary of the presentation) and status code 200.
+        case status code 202:
+            dict: {"status: "pending"/"processing"} and status code 202.
+        case status code 404:
+            dict: {"status": "email"/"file" not found"} and status code 404.
+    @raise FileNotFoundError:
+        If the file was not found, causing a retry.
+    """
+    uid_dictionary = get_uid_by_email_and_filename(email, filename)
+    print(uid_dictionary)
+    # case1: there in uid with the given email and filename:
+    if uid_dictionary["uid"]:
+        return find_file_by_uid(uid_dictionary["uid"])
+
+    # case2: email not found:
+    elif uid_dictionary["email"] is None:
+        return {"error": "email not found"}, 404
+
+    # case3: the filename was not found:
+    elif uid_dictionary["filename"] is None:
+        return {"error": "you have no filename named: " + filename}, 404
+
+    # case4: unknown error:
+    else:
+        return {"error": "something went wrong"}, 404
+
+
 @api.route('/content/json/<string:uid>', methods=['GET'])
+@api.route('/content/json/', defaults={'uid': None}, methods=['GET'])
 class JsonContentResource(Resource):
     def get(self, uid: str) -> (dict, int):
         """
@@ -145,10 +194,26 @@ class JsonContentResource(Resource):
                 404 - "not found": the file was not found.
         @param uid:
         """
-        try:
-            return find_file(uid)
-        except FileNotFoundError:
-            return {"message": "File not found"}, 404
+        if uid:
+            try:
+                return find_file_by_uid(uid)
+            except FileNotFoundError:
+                return {"message": "Upload not found"}, 404
+        else:
+            # case the body have no email or filename:
+            email = request.form['email']
+            filename = request.form['filename']
+            if email is None and filename is None:
+                return {"error": "missing parameters: email or filename or both"}, 400
+            elif email is None:
+                return {"error": "missing parameter: email"}, 400
+            elif filename is None:
+                return {"error": "missing parameter: filename"}, 400
+            else:
+                try:
+                    return find_file_by_email_and_filename(email, filename)
+                except FileNotFoundError:
+                    return {"message": "Upload not found"}, 404
 
 
 def run_server(with_debug: bool) -> None:

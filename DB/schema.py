@@ -166,14 +166,11 @@ def add_new_pptx_file(file_in_bytes: bytes, filename: str, email: str = None) ->
 
     session = SessionLocal()
     upload_time = get_current_datetime()
+    uid = str(uuid.uuid4())
     status = "pending"
 
-    # # Read the PPTX file as binary data
-    # with open(filename, 'rb') as f:
-    #     file_blob = f.read()
-
     # Insert the new Upload record
-    new_upload = Upload(filename=filename, upload_time=upload_time, status=status, user_id=user_id)
+    new_upload = Upload(filename=filename, upload_time=upload_time, status=status, user_id=user_id, uid=uid)
     session.add(new_upload)
     session.commit()
     session.refresh(new_upload)
@@ -344,5 +341,27 @@ def get_data_by_uid(uid: str) -> dict:
     return {"id": upload.id, "filename": upload.filename, "status": upload.status, "upload_time": upload.upload_time, "finish_time": upload.finish_time, "explanation": upload.explanation}
 
 
-# print(get_data_by_uid("31de5733-933b-45fa-8b28-827a1a3b231e"))
-
+def get_uid_by_email_and_filename(email: str, filename: str) -> dict:
+    """
+    @summary:
+        Get the uid of the upload by the email and filename with the last upload time.
+    @param email: str
+        The email of the user.
+    @param filename: str
+        The filename of the upload.
+    @return: dict
+        case 1: data exists - {"uid": uid}
+        case 2: email doesn't exist - {"uid": None, "email": None, "filename": None}
+        case 3: filename doesn't exist - {"uid": None, "email": email, "filename": None}
+    """
+    session = SessionLocal()
+    user_id = session.query(User).filter(User.email == email).first().id
+    if user_id is None:
+        session.close()
+        return {"uid": None, "email": None, "filename": None}
+    upload = session.query(Upload).filter(Upload.user_id == user_id, Upload.filename == filename).order_by(Upload.upload_time.desc()).first()
+    session.close()
+    if upload:
+        return {"uid": upload.uid, "email": email, "filename": filename}
+    else:
+        return {"uid": None, "email": email, "filename": None}
