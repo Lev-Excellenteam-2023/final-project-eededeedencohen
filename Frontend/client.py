@@ -147,5 +147,3 @@ def status_by_email_and_filename(email: str, filename: str) -> Status:
 
     except requests.exceptions.ConnectionError:
         raise Exception('Server is down.')
-
-

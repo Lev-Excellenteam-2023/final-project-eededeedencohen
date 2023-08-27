@@ -60,12 +60,12 @@ class FileUploadResource(Resource):
         """
         if 'file' not in request.files:
             # case the body of the request is empty: no file part
-            return {"error": "No file part in the request."}, 400
+            return {"status": "No file part in the request."}, 400
 
         file = request.files['file']
         if file.filename == '':
             # case the user does not select a file to upload
-            return {"error": "No file selected for uploading"}, 400
+            return {"status": "No file selected for uploading"}, 400
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -170,15 +170,15 @@ def find_file_by_email_and_filename(email: str, filename: str) -> (dict, int):
 
     # case2: email not found:
     elif uid_dictionary["email"] is None:
-        return {"error": "email not found"}, 404
+        return {"status": "email not found"}, 404
 
     # case3: the filename was not found:
     elif uid_dictionary["filename"] is None:
-        return {"error": "you have no filename named: " + filename}, 404
+        return {"status": "filename not found="}, 404
 
     # case4: unknown error:
     else:
-        return {"error": "something went wrong"}, 404
+        return {"status": "something went wrong"}, 404
 
 
 @api.route('/content/json/<string:uid>', methods=['GET'])
@@ -199,22 +199,22 @@ class JsonContentResource(Resource):
             try:
                 return find_file_by_uid(uid)
             except FileNotFoundError:
-                return {"message": "Upload not found"}, 404
+                return {"status": "Upload not found"}, 404
         else:
             email = request.form.get('email')
             filename = request.form.get('filename')
 
             if not email and not filename:
-                return {"error": "missing parameters: email and filename"}, 400
+                return {"status": "missing parameters: email and filename"}, 400
             elif not email:
-                return {"error": "missing parameter: email"}, 400
+                return {"status": "missing parameter: email"}, 400
             elif not filename:
-                return {"error": "missing parameter: filename"}, 400
+                return {"status": "missing parameter: filename"}, 400
             else:
                 try:
                     return find_file_by_email_and_filename(email, filename)
                 except FileNotFoundError:
-                    return {"message": "Upload not found"}, 404
+                    return {"status": "Upload not found"}, 404
 
 
 def run_server(with_debug: bool) -> None:
