@@ -1,13 +1,16 @@
 import asyncio
 import os
-import threading
-import time
 
 from Explainer.convert_pptx_summary_to_json import convert_pptx_to_summary_and_write_to_json
 from Explainer.get_data_from_filename import get_unique_id, get_original_filename, get_uploaded_datetime
 
-uploads_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'uploads')
-outputs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Shared', 'outputs')
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+uploads_folder = os.path.join(base_dir, '..', 'Shared', 'uploads')
+uploads_folder = os.path.abspath(uploads_folder)
+
+outputs_folder = os.path.join(base_dir, '..', 'Shared', 'outputs')
+outputs_folder = os.path.abspath(outputs_folder)
 
 
 async def process_pptx_file_to_json(filename: str) -> None:
@@ -54,7 +57,7 @@ async def process_new_uploaded_files_to_json() -> None:
         None
     """
     while True:
-        new_uploaded_filenames = os.listdir(uploads_folder)
+        new_uploaded_filenames = [file_name for file_name in os.listdir(uploads_folder) if file_name.endswith('.pptx')]
 
         # Gather tasks and run them in parallel
         print("Processing new uploaded files...")

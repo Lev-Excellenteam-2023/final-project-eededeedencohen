@@ -1,6 +1,6 @@
 import asyncio
 from Explainer.get_summary_from_gpt import get_explanation_of_text, get_titles_of_slides
-from Explainer.Parser.parse_pptx_file import get_list_of_content_from_pptx_file
+from Explainer.Parser.parse_pptx_file import get_list_of_content_from_pptx_file, get_list_of_content_from_pptx_bytes
 from Explainer.Parser.wtite_list_to_json import write_data_to_json
 
 
@@ -46,6 +46,60 @@ async def convert_pptx_to_summary(pptx_path: str) -> list:
     return result
 
 
+async def convert_pptx_bytes_to_summary(pptx_bytes: bytes) -> list:
+    """
+    @summary:
+        Convert the pptx bytes to a summary of the slides.
+    @param pptx_bytes:
+        bytes: The binary data of the pptx file.
+    @return:
+        list: The list of the summary of the slides is this format: [[slide_title1, slide_summary1], [slide_title2, slide_summary2], ...]
+    @raise:
+        ValueError: If the OPENAI_API_KEY environment variable is not set.
+    """
+    slides_content_list = await get_list_of_content_from_pptx_bytes(pptx_bytes)
+    slides_titles = await get_titles_of_slides(slides_content_list)
+    summary_pptx_list = []
+
+    for slide_text in slides_content_list:
+        slide_summary = asyncio.create_task(get_explanation_of_text(str(slide_text)))
+        summary_pptx_list.append(slide_summary)
+
+    await asyncio.gather(*summary_pptx_list)
+
+    result = []
+    for i, slide_summary in enumerate(summary_pptx_list):  # Here also change "slide_summary" to "task"
+        result.append([slides_titles[i], slide_summary.result()])
+    return result
+
+
+# async def convert_pptx_bytes_to_summary(pptx_bytes: bytes) -> list:
+#     """
+#     @summary:
+#         Convert the pptx file to a summary of the slides.
+#     @param pptx_bytes:
+#         bytes: The binary data of the pptx file.
+#     @return:
+#         list: The list of the summary of the slides is this format: [[slide_title1, slide_summary1], [slide_title2, slide_summary2], ...]
+#     @raise:
+#         ValueError: If the OPENAI_API_KEY environment variable is not set.
+#     """
+#     slides_content_list = await get_list_of_content_from_pptx_file(pptx_bytes)
+#     slides_titles = await get_titles_of_slides(slides_content_list)
+#     summary_pptx_list = []
+#
+#     for slide_text in slides_content_list:
+#         slide_summary = asyncio.create_task(get_explanation_of_text(str(slide_text)))
+#         summary_pptx_list.append(slide_summary)
+#
+#     await asyncio.gather(*summary_pptx_list)
+#
+#     result = []
+#     for i, slide_summary in enumerate(summary_pptx_list):  # Here also change "slide_summary" to "task"
+#         result.append([slides_titles[i], slide_summary.result()])
+#     return result
+
+
 async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_destination_path: str, summary_topic_name: str) -> None:
     """
     @summary:
@@ -67,10 +121,30 @@ async def convert_pptx_to_summary_and_write_to_json(pptx_source_path: str, json_
     await write_data_to_json(converting_List_to_Section_List, json_destination_path, summary_topic_name)
 
 
-# Run the async function
-# asyncio.run(convert_pptx_to_summary_and_write_to_json("../files/asyncio-intro.pptx", "./asyncio-intro.json", "asyncio-intro"))
+async def convert_pptx_bytes_to_dictionary_format_summary(pptx_bytes: bytes, summary_topic_name: str) -> dict:
+    """
+    @summary:
+        Convert the pptx file to a summary of the slides and return the summary in a dictionary format.
+    """
+    pptx_content = await convert_pptx_bytes_to_summary(pptx_bytes)
 
+    converting_List_to_Section_List = [convert_list_to_sections_list(pptx_content[i]) for i in range(len(pptx_content))]
 
+    # Construct the formatted data dictionary
+    formatted_data = {
+        "summary_topic": summary_topic_name,
+        "slides": []
+    }
+
+    for i, slide in enumerate(converting_List_to_Section_List, start=1):
+        slide_dict = {
+            "slide number": i,
+            "slide title": slide[0][0] if slide else "",
+            "slide content": {f"section {j}": content[0] for j, content in enumerate(slide[1:], start=1)}
+        }
+        formatted_data["slides"].append(slide_dict)
+
+    return formatted_data
 
 
 

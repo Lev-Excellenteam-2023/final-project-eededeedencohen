@@ -3,7 +3,7 @@ import openai
 from retrying import retry
 from dotenv import load_dotenv
 # from parse_pptx_file import get_list_of_content_from_pptx_file
-import asyncio
+import asyncio 
 
 
 def configure() -> None:
@@ -97,21 +97,6 @@ async def get_titles_of_slides(slides_content: list) -> list:
         list: The list of the titles of the slides.
     """
     return [slide_content[0][0] for slide_content in slides_content]
-
-
-# async def main():
-#     pptxSlideContent = [['Parallelism'], ['Parallelism consists of performing multiple operations at the same time. Multiprocessing is a means to effect parallelism, and it entails spreading tasks over a computer’s central processing units (CPUs, or cores). '], ['Multiprocessing is well-suited for CPU-bound tasks: tightly bound for loops and mathematical computations usually fall into this category.']]
-#     # results = await convert_pptx_to_summary("./files/asyncio-intro.pptx")
-#     results = await get_explanation_of_text(str(pptxSlideContent))
-#
-#     # for slide in results:
-#     #     print(slide[0])  # This will print the slide title
-#     #     print(slide[1])  # This will print the GPT explanation of the slide
-#     #     print("==================================")
-#     print(pptxSlideContent[0][0] + ":")
-#     print(results)
-#
-# asyncio.run(main())
 
 
 

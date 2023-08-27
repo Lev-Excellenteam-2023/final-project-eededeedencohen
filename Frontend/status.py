@@ -25,7 +25,7 @@ class Status:
             Returns True if the status is "done", False otherwise.
     """
 
-    def __init__(self, status: str = "", filename: str = "", timestamp: str = "", explanation: object = None) -> None:
+    def __init__(self, status: str = "", filename: str = "", timestamp: datetime = None, explanation: object = None) -> None:
         """
         @summary:
             Constructs a Status object.
@@ -42,10 +42,16 @@ class Status:
         self.filename = filename
         self.timestamp = None
         self.explanation = explanation
-        if timestamp:
-            self.set_datetime(timestamp)
-        else:
-            self.timestamp = None
+        self.timestamp = timestamp
+
+    def __str__(self) -> str:
+        """
+        @summary:
+            Returns a string representation of the Status object.
+        @return:
+            str: A string representation of the Status object.
+        """
+        return "Status: " + self.status + ", Filename: " + self.filename + ", Timestamp: " + str(self.timestamp) + ", Explanation: " + str(self.explanation)
 
     def is_done(self) -> bool:
         """
@@ -55,15 +61,3 @@ class Status:
             bool: True if the status is "done", False otherwise.
         """
         return self.status == "done"
-
-    def set_datetime(self, string_datetime: str) -> None:
-        """
-        @summary:
-            Converts a string datetime to a datetime object and sets the timestamp attribute.
-        @param string_datetime:
-            str: The string datetime in this format:
-            'MM-DD-YYYY HH:MM'
-        @return:
-            None
-        """
-        self.timestamp = datetime.strptime(string_datetime, '%m-%d-%Y %H:%M')
