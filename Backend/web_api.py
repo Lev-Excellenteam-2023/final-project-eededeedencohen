@@ -114,13 +114,13 @@ def find_file_by_uid(uid: str) -> (dict, int):
     if upload_data is None:
         return {"status": "not found"}, 404
 
-    if upload_data["status"] == "pending" or upload_data["status"] == "processing":
-        return {
-            "status": upload_data["status"],
-            "filename": upload_data["filename"],
-            "upload time": upload_data["upload_time"].strftime('%d %B %Y %H:%M:%S'),
-            "explanation": None
-        }, 202
+    # case2: the file just uploaded and not processed yet:
+    elif upload_data["status"] == "pending":
+        return {"status": "pending"}, 202
+
+    # case3: the file right now is being processed:
+    elif upload_data["status"] == "processing":
+        return {"status": "processing"}, 202
 
     # case4: the file was processed successfully:
     else:
